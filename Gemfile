@@ -77,4 +77,4 @@ group :test do
   gem 'webdrivers'
 end
 
-gem "view_component", "~> 2.57"
+gem 'view_component', '~> 2.57'
