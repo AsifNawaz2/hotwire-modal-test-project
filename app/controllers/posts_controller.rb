@@ -22,11 +22,15 @@ class PostsController < ApplicationController
   def edit; end
 
   # POST /posts or /posts.json
-  def create # rubocop:disable Metrics/MethodLength
+  def create # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     @post = Post.new(post_params)
 
     respond_to do |format|
       if @post.save
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.prepend('posts',
+            partial: 'posts/post', locals: { post: @post })
+        end
         format.html do
           redirect_to post_url(@post), notice: 'Post was successfully created.'
         end
@@ -39,9 +43,13 @@ class PostsController < ApplicationController
   end
 
   # PATCH/PUT /posts/1 or /posts/1.json
-  def update # rubocop:disable Metrics/MethodLength
+  def update # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     respond_to do |format|
       if @post.update(post_params)
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(@post,
+            partial: 'posts/post', locals: { post: @post })
+        end
         format.html do
           redirect_to post_url(@post), notice: 'Post was successfully updated.'
         end
